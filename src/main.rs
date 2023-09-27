@@ -85,8 +85,8 @@ fn run() -> Result<()> {
     Ok(())
 }
 
-/// 🐝 OpenAPI client generator
 #[derive(Parser)]
+#[command(author, version, about)]
 struct Cli {
     #[clap(subcommand)]
     cmd: Command,
