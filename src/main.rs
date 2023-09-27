@@ -23,6 +23,9 @@ fn main() -> Result<()> {
                 .with_target(false)
                 .without_time(),
         )
+        .with(tracing_subscriber::filter::FilterFn::new(|m| {
+            !m.target().contains("salsa")
+        }))
         .with(tracing_error::ErrorLayer::default())
         .init();
 
