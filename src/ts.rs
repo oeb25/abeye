@@ -150,12 +150,14 @@ impl Operation {
     #[tracing::instrument(skip_all)]
     fn ts(&self, db: &dyn crate::Db, api: InputApi, method: &str) -> (String, String) {
         let path = Utf8PathBuf::from(&self.path);
-        let path = if let Some(prefix) = api.config(db).api_prefix {
-            path.strip_prefix(prefix).unwrap().to_owned()
+        let name = if let Some(prefix) = api.config(db).api_prefix {
+            path.strip_prefix(prefix).unwrap()
         } else {
-            path
-        };
-        let name = path.components().join("_").to_lower_camel_case();
+            &path
+        }
+        .components()
+        .join("_")
+        .to_lower_camel_case();
 
         fn typify_map(db: &dyn crate::Db, map: &BTreeMap<String, Type>) -> Option<Type> {
             if map.is_empty() {
