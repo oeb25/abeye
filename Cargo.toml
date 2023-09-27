@@ -1,0 +1,28 @@
+[package]
+name = "abeye"
+description = "🐝 OpenAPI client generator"
+readme = "README.md"
+version = "0.1.0"
+edition = "2021"
+license = "MIT/Apache-2.0"
+authors = ["Oliver Bøving <oliver@bvng.dk>"]
+repository = "https://github.com/oeb25/abeye"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+camino = "1.1.6"
+clap = { version = "4.4.5", features = ["derive"] }
+color-eyre = "0.6.2"
+heck = "0.4.1"
+indent_write = "2.2.0"
+itertools = "0.11.0"
+openapiv3 = "1.0.3"
+pluralizer = "0.4.0"
+reqwest = { version = "0.11.20", features = ["blocking", "json"] }
+salsa = { git = "https://github.com/salsa-rs/salsa.git", package = "salsa-2022" }
+serde = "1.0.188"
+serde_json = "1.0.107"
+tracing = "0.1.37"
+tracing-error = "0.2.0"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
