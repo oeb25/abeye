@@ -66,3 +66,37 @@ export const requestJson = <T>(
   const { data, cancel } = requestPlain(method, url, body, options);
   return { data: data.then((text) => JSON.parse(text) as T), cancel };
 };
+
+export type SSEStream<T> = (
+  event:
+    | { type: "message"; data: T }
+    | {
+        type: "error";
+        event: Event;
+      }
+) => void;
+
+const sse = <T>(
+  _method: Method,
+  url: string,
+  options?: ApiOptions
+): {
+  cancel: () => void;
+  listen: (stream: SSEStream<T>) => void;
+} => {
+  const source = new EventSource(`${getApiBase(options)}${url}`);
+
+  let stream: SSEStream<T> | null = null;
+
+  source.onmessage = (event) => {
+    const data = event.data;
+    stream?.({ type: "message", data });
+  };
+  source.onerror = (event) => {
+    stream?.({ type: "error", event });
+  };
+  return {
+    cancel: () => source.close(),
+    listen: (newStream) => (stream = newStream),
+  };
+};
