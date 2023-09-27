@@ -26,7 +26,12 @@ export const requestPlain = (
     method: method.toUpperCase(),
     body: typeof body != "undefined" ? JSON.stringify(body) : void 0,
     signal: controller.signal,
-    headers: options?.headers,
+    headers: {
+      ...options?.headers,
+      ...(typeof body != "undefined"
+        ? { "Content-Type": "application/json" }
+        : {}),
+    },
   }).then(async (res) => {
     inFlight = false;
     if (res.ok) {
@@ -58,45 +63,6 @@ export const requestJson = <T>(
   data: Promise<T>;
   cancel: (reason?: string) => void;
 } => {
-  const { data, cancel } = requestPlain(method, url, body, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const { data, cancel } = requestPlain(method, url, body, options);
   return { data: data.then((text) => JSON.parse(text) as T), cancel };
-};
-
-export type SSEStream<T> = (
-  event:
-    | { type: "message"; data: T }
-    | {
-        type: "error";
-        event: Event;
-      }
-) => void;
-
-const sse = <T>(
-  _method: Method,
-  url: string,
-  options?: ApiOptions
-): {
-  cancel: () => void;
-  listen: (stream: SSEStream<T>) => void;
-} => {
-  const source = new EventSource(`${getApiBase(options)}${url}`);
-
-  let stream: SSEStream<T> | null = null;
-
-  source.onmessage = (event) => {
-    const data = event.data;
-    stream?.({ type: "message", data });
-  };
-  source.onerror = (event) => {
-    stream?.({ type: "error", event });
-  };
-  return {
-    cancel: () => source.close(),
-    listen: (newStream) => (stream = newStream),
-  };
 };
