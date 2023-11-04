@@ -9,13 +9,14 @@ export const setGlobalApiBase = (apiBase: string) =>
 export type ApiOptions = {
   fetch?: typeof fetch;
   apiBase?: string;
+  headers?: Record<string, string>;
 };
 
 export const requestPlain = (
   method: Method,
   url: string,
   body?: unknown,
-  options?: ApiOptions & { headers?: Record<string, string> }
+  options?: ApiOptions
 ): {
   data: Promise<string>;
   cancel: (reason?: string) => void;
