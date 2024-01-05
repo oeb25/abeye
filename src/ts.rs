@@ -227,9 +227,12 @@ impl Operation {
                 ResponseKind::Json(ty) => {
                     format!("requestJson<{}>({args})", ty.ts(db))
                 }
-                ResponseKind::EventStream(ty) => {
-                    format!("sse<{}>({args})", ty.ts(db))
-                }
+                ResponseKind::EventStream(ty) => match ty.kind(db) {
+                    TypeKind::Array(inner) => {
+                        format!("sse<{}>({args})", inner.ts(db))
+                    }
+                    _ => format!("sse<{}>({args})", ty.ts(db)),
+                },
             },
             None => todo!(),
         };
