@@ -285,7 +285,7 @@ fn operation(
                     todo!()
                 };
                 match media_type.as_str() {
-                    "text/plain" => {
+                    "text/plain" | "text/plain; charset=utf-8" => {
                         assert_eq!(ty, Type::new(db, TypeKind::String));
                         Some(ResponseKind::Plain)
                     }
